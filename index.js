@@ -5,8 +5,9 @@ function showReps(){
 
 
 function searchRepositories(){
-  const searchT = $('#searchTerms').val()
-  //  = document.getElementById("searchTerms").innerHTML
+  const searchT = document.getElementById("searchTerms").value
+  //  $('#searchTerms').val()
+  //  =
 // debugger;
 $.get(`https://api.github.com/search/repositories?q=${searchT}`,function(response){
   console.log("r",response)
@@ -19,8 +20,8 @@ $.get(`https://api.github.com/search/repositories?q=${searchT}`,function(respons
   <p> Owner name: ${r.owner.login}</p>
   <a href="#"
    data-repository="${r.name}"
-   data-username="${r.owner.login}"
-   onclick='getCommits(this)'> Get Commits </a>`
+   data-owner="${r.owner.login}"
+   onclick='showCommits(this)'> Get Commits </a>`
 })
 let repoList = `<ul> ${list}</ul>`
 document.getElementById("results").innerHTML = repoList
@@ -33,21 +34,29 @@ document.getElementById("results").innerHTML = repoList
 });
 }
 
-// function showCommits(el){
-// let dataset = el.dataset
-// const datarep = dataset.repository
-// const name = dataset.username
-//   $.get(`https://api.github.com/repos/${name}/${datarep}/commits`,function(response){
-//   $("#details").html(response)
-// })
-//   const commits = JSON.parse(this.responseText)
-//   document.getElementById("commits-template").innerHTML
-//   const template = Handlebars.compile(src)
-//   const commitList = template(commits)
-// }
-//
+function showCommits(el){
+let dataset = el.dataset
+const datarep = dataset.repository
+const name = dataset.owner
+$.get(`https://api.github.com/repos/${name}/${datarep}/commits`,function(response){
+  console.log("r",response)
+  const list = response.map(r=>{
+    return `<li> user: ${r.author.login},
+    name: ${r.commit.author.name},
+    sha: ${r.sha},
+    image: <img src="${r.avatar_url}">
+    message: ${r.commit.message}</li>`
+})
+let repoList = `<ul> ${list}</ul>`
+document.getElementById("details").innerHTML = repoList
+})
+}
+
+
 function displayError(error){
-console.log("Hello error"+ error)
+
+errormsg = ("I'm sorry, there's been an error. Please try again.");
+document.getElementById("errors").innerHTML = errormsg
 }
 
 
