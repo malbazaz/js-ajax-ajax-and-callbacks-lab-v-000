@@ -5,10 +5,12 @@ function showReps(){
 
 
 function searchRepositories(){
-const searchT = document.getElementById("searchTerms").innerHTML
+  const searchT = $('#searchTerms').val()
+  //  = document.getElementById("searchTerms").innerHTML
+// debugger;
 $.get(`https://api.github.com/search/repositories?q=${searchT}`,function(response){
   console.log("r",response)
-  const list = response.map(r=>{
+  const list = response.items.map(r=>{
     return `<li>
   <a href=${r.html_url}>${r.name}</a>
   <p>Rep name: ${r.name}</p>
@@ -19,14 +21,16 @@ $.get(`https://api.github.com/search/repositories?q=${searchT}`,function(respons
    data-repository="${r.name}"
    data-username="${r.owner.login}"
    onclick='getCommits(this)'> Get Commits </a>`
-}).join('')
+})
 let repoList = `<ul> ${list}</ul>`
 document.getElementById("results").innerHTML = repoList
   // const repos = JSON.parse(response)
   // const src = document.getElementById("repository-template").innerHTML
   // const template = Handlebars.compile(src)
   // const repoList = template(response)
-})
+}).fail(function(error) {
+  displayError(error)
+});
 }
 
 // function showCommits(el){
@@ -42,15 +46,9 @@ document.getElementById("results").innerHTML = repoList
 //   const commitList = template(commits)
 // }
 //
-// function displayError(){
-// //   $.get("this_doesnt_exist.html", function(data) {
-// //     // This will not be called because the .html file request doesn't exist
-// //     doSomethingGood();
-// //   }).fail(function(error) {
-// //     // This is called when an error occurs
-// //     console.log('Something went wrong: ' + error);
-// //   });
-// }
+function displayError(error){
+console.log("Hello error"+ error)
+}
 
 
 
